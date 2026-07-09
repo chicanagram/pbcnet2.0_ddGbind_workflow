@@ -1,0 +1,43 @@
+# PBCNet2.0 ddG workflow — Linux + NVIDIA CUDA environment
+# Target: the SSH GPU cluster (training, finetuning, full benchmarks) and WSL2 Ubuntu.
+#
+# Create with:
+#   conda env create -f env/environment-linux-cuda.yml
+#   conda activate pbcnet-cuda
+#
+# DGL note: DGL's GPU build is CUDA-only. The pip line below installs the CUDA 11.8
+# build of dgl. If your cluster CUDA differs, change cu118 -> cu117/cu121 to match
+# `nvidia-smi`. Upstream pinned dgl==1.0.2 (CUDA 11.3); we use a newer 1.1.x that has
+# reliable wheels. If you hit graph-API incompatibilities, fall back to:
+#   pip install dgl==1.0.2 -f https://data.dgl.ai/wheels/cu113/repo.html --no-deps
+name: pbcnet-cuda
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  # --- scientific / cheminformatics stack (conda-forge has good linux-64 builds) ---
+  - numpy<2
+  - pandas
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - networkx
+  - psutil
+  - tqdm
+  - pyyaml
+  - pydantic
+  - packaging
+  - rdkit
+  - biopython            # provides Bio.PDB used by Graph2pickle.py
+  - jupyterlab
+  - pip:
+      # PyTorch CUDA build — match the cluster's CUDA toolkit.
+      - --extra-index-url https://download.pytorch.org/whl/cu118
+      - torch==2.1.2
+      - torchvision
+      - torchaudio
+      # DGL CUDA build (graph library). cu118 wheel index:
+      - --find-links https://data.dgl.ai/wheels/cu118/repo.html
+      - dgl==1.1.3

@@ -1,0 +1,27 @@
+# Example config. Nothing reads this automatically yet — it documents the knobs the
+# scripts expose as CLI flags, and is a template if we add a config-driven runner.
+
+device: auto            # auto | cpu | cuda:0   (env var PBCNET_DEVICE overrides)
+checkpoint: null        # null -> bundled external/PBCNet2.0/PBCNet2.pth
+
+benchmark:
+  pairs_csv: data/FEP/fep_pairs.csv
+  out: results/predictions.csv
+  batch_size: 64
+
+finetune:
+  finetune_csv: data/my_target/finetune_pairs.csv
+  eval_csv: data/my_target/eval_pairs.csv
+  name: my_target
+  epochs: 10
+  lr: 1.0e-5
+  batch_size: 8
+  seed: 1
+
+analysis:
+  predictions: results/predictions.csv
+  outdir: results/analysis
+
+figures:
+  predictions: results/predictions.csv
+  outdir: results/figures

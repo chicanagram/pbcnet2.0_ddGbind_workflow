@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.ipynb_checkpoints/
+.venv/
+
+# Results / scratch (keep the dir, ignore contents)
+results/*
+!results/.gitkeep
+
+# Large / generated data — keep vendored upstream data, ignore new local sets
+data/*
+!data/.gitkeep
+
+# Preprocessed graphs can be regenerated
+*.pkl
+
+# OS
+.DS_Store
+
+# Notebook-generated figures
+notebooks/*.png
+
+# NOTE: external/PBCNet2.0/ is vendored intentionally and IS tracked (incl. its .pkl/.pth).
+# The *.pkl rule above is scoped by the negations below so upstream data stays in git:
+!external/PBCNet2.0/**

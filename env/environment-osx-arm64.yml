@@ -1,0 +1,39 @@
+# PBCNet2.0 ddG workflow — macOS Apple Silicon (M1/M2/M3) environment  [CPU-only]
+# Target: local development, inference, analysis, visualization, interpretability.
+#
+# Create with:
+#   conda env create -f env/environment-osx-arm64.yml
+#   conda activate pbcnet-cpu
+#
+# IMPORTANT hardware note:
+#   DGL has NO Apple-MPS (Metal) backend and NO ROCm backend — its only GPU backend
+#   is CUDA. On Apple Silicon, DGL therefore runs CPU-only regardless of the M2 GPU.
+#   PyTorch *can* use MPS, but mixing MPS tensors with CPU-only DGL graphs is fragile,
+#   so this workflow forces CPU on macOS (see src/pbcnet_workflow/device.py).
+#   => Use the Mac for inference / small finetunes / analysis, NOT full training.
+#
+# DGL on osx-arm64 is installed from conda-forge (pip arm64 wheels are unreliable for
+# the versions we need). If conda solve fails on dgl, see env/README.md for fallbacks.
+name: pbcnet-cpu
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - numpy<2
+  - pandas
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - networkx
+  - psutil
+  - tqdm
+  - pyyaml
+  - pydantic
+  - packaging
+  - rdkit
+  - biopython
+  - jupyterlab
+  - pytorch            # conda-forge CPU/MPS build for osx-arm64
+  - dgl                # conda-forge osx-arm64 build (CPU-only)
