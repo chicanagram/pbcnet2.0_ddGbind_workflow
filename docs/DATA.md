@@ -1,16 +1,42 @@
 # Datasets & weights — what ships, what to source
 
+> **This repo has been pared down** (423 MB → ~61 MB) to the assets relevant to the
+> **flu PA/NA mutation-ΔΔG** use case. Removed from the upstream vendor: `Result_in_paper/`,
+> `data/SAR-Diff/`, `data/Selection/`, `data/F-Opt/`, most of `data/FEP/`, and the redundant
+> `.maegz` archives. Everything removed is recoverable from the initial git commit or the
+> public upstream repo — see "Restoring removed data" below.
+
 ## Already in the repo (vendored under `external/PBCNet2.0/`)
 
 | Asset | Location | Notes |
 |-------|----------|-------|
 | **Pretrained weights** | `external/PBCNet2.0/PBCNet2.pth` (3.1 MB) | ⚠️ README calls it `PBCNet2.0.pth`; the real filename is `PBCNet2.pth`. `pbcnet_workflow.checkpoint` handles this. |
-| **FEP+ benchmark inputs** | `data/FEP/direct_input/*.csv`, `data/FEP/pose_graph/`, `data/FEP/finetune_input/` | 16 standard targets: PTP1B, Thrombin, Tyk2, CDK2, Jnk1, Bace, MCL1, p38, syk, shp2, pfkfb3, eg5, cdk8, cmet, tnks2, hif2a. |
-| **Mutation set** | `data/Mutation/<UniProt>/` | UniProt IDs incl. EGFR (P00533). Same-ligand WT-vs-mutant complexes — the basis for the mutation-effect interpretability work. |
-| **Other eval sets** | `data/F-Opt/`, `data/SAR-Diff/`, `data/Selection/` | pose optimization, SAR pairs, virtual-screening selection. |
-| Example inference | `case/try.ipynb`, `case/toy_data/` | eg5 ligands + pocket, a good smoke test. |
+| **Mutation set** ★ | `data/Mutation/<UniProt>/` (50 MB) | **Primary validation target.** 8 proteins (EGFR P00533 L858R/T790M/G719C, ACE P12821, aldose reductase P15121, …), same drug vs WT/mutant pocket, with per-pair experimental ΔΔG in `predict.csv`. Direct analogue of flu-mutation ΔΔG. Build pairs with `scripts/make_mutation_pairs.py`. |
+| **FEP smoke-test** | `data/FEP/{pose_graph,direct_input}/eg5` (6.3 MB) | One FEP+ target (eg5) kept so the `run_benchmark`/`make_fep_pairs` pipeline stays testable. The other 15 targets were removed. |
+| Example inference | `case/try.ipynb`, `case/toy_data/` (1.7 MB) | eg5 ligands + pocket, minimal "model loads & runs" check. |
 
-So **weights + the FEP benchmark are covered** — no download needed for those.
+So **weights + a mutation validation set + a pipeline smoke test are covered** — no download needed.
+
+## Validate the method on the mutation set (no sourcing needed)
+
+```bash
+python scripts/make_mutation_pairs.py                       # -> results/mutation_pairs.csv (65 pairs, 8 targets)
+python scripts/run_benchmark.py results/mutation_pairs.csv --out results/mut_pred.csv
+python scripts/analyze_results.py results/mut_pred.csv --outdir results/mut_analysis
+python scripts/visualize.py       results/mut_pred.csv --outdir results/mut_figs
+```
+
+This is the closest in-repo proxy for your flu PA/NA task: how well predicted ΔΔG tracks the
+experimental effect of a **pocket mutation** on a drug's binding.
+
+## Restoring removed data
+
+```bash
+# a specific path from the initial commit:
+git checkout 1e2424f -- external/PBCNet2.0/data/FEP
+# or re-vendor everything fresh from upstream:
+git clone https://github.com/YuJie-0202/PBCNet2.0 /tmp/pbc && rm -rf /tmp/pbc/.git
+```
 
 ## Needs downloading
 

@@ -42,6 +42,20 @@ python -m pbcnet_workflow.device     # sanity: prints versions + selected device
 (You may need `export PYTHONPATH=$PWD/src` or `pip install -e .` once packaging is added;
 the scripts already prepend `src/` to `sys.path`.)
 
+## Validate right now (no data to source)
+
+The repo is pared to the **flu PA/NA mutation-ΔΔG** use case (~61 MB). The bundled
+`data/Mutation/` set (WT-vs-mutant, 8 proteins, experimental ΔΔG) is the in-repo proxy:
+
+```bash
+python scripts/make_mutation_pairs.py                          # results/mutation_pairs.csv (65 pairs)
+python scripts/run_benchmark.py results/mutation_pairs.csv --out results/mut_pred.csv
+python scripts/analyze_results.py results/mut_pred.csv --outdir results/mut_analysis
+python scripts/visualize.py       results/mut_pred.csv --outdir results/mut_figs
+```
+
+See [docs/DATA.md](docs/DATA.md) for what was removed and how to restore it.
+
 ## The four workflows
 
 ```bash
